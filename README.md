@@ -41,7 +41,7 @@ The repository has the following structure:
 1. **Clone the repository**
 
    ```bash
-   git clone https://github.com/amorgan404/monitor-composer.git
+   git clone https://github.com/amorgan404/monitor-containers.git
    cd monitor-composer
    ```
 

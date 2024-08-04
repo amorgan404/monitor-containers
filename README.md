@@ -63,4 +63,4 @@ Prometheus as a Data Sources and Grafana Dashboard have been added automatically
 
 ## License
 
-This project is licensed under the MIT License.
+This project is licensed under the [LICENSE](https://github.com/amorgan404/monitor-containers/?tab=MIT-1-ov-file#) License.

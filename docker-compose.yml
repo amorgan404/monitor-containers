@@ -1,0 +1,73 @@
+version: '3.8'
+services:
+  node_exporter:
+    image: prom/node-exporter
+    container_name: node_exporter
+    ports:
+      - 9100:9100
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+    command: 
+      - '--path.procfs=/host/proc' 
+      - '--path.sysfs=/host/sys'
+      - '--path.rootfs=/rootfs'
+      - '--collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($$|/)'
+    networks:
+      - monitor
+
+  grafana:
+    image: grafana/grafana
+    container_name: grafana
+    user: "472"
+    ports:
+      - 3000:3000
+    networks:
+      - monitor
+    deploy:
+      resources:
+        reservations:
+          memory: 128M
+    restart: unless-stopped
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_USERS_ALLOW_SIGN_UP=false
+      - GF_DATA_SOURCE_PROMETHEUS_URL=http://prometheus:9090
+    volumes:
+      - grafana-data:/var/lib/grafana
+      - ${PWD}/grafana/provisioning:/etc/grafana/provisioning
+      - ${PWD}/grafana/dashboards:/var/lib/grafana/dashboards
+
+  prometheus:
+    image: prom/prometheus
+    container_name: prometheus
+    ports:
+      - 9090:9090
+    volumes:
+      - ${PWD}/prometheus:/etc/prometheus
+    networks:
+      - monitor
+    restart: unless-stopped
+
+  alertmanager:
+    image: prom/alertmanager
+    container_name: alertmanager
+    restart: unless-stopped
+    volumes:
+      - ${PWD}/alertmanager.yml:/etc/alertmanager/alertmanager.yml
+    command:
+      - '--config.file=/etc/alertmanager/alertmanager.yml'
+    ports:
+      - "9093:9093"
+    networks:
+      - monitor
+
+networks:
+  monitor:
+    name: monitor
+
+volumes:
+  grafana-data:
+    name: grafana-data

@@ -1,0 +1,19 @@
+global:
+  resolve_timeout: 5m
+
+route:
+  group_by: ['alertname']
+  group_wait: 10s
+  group_interval: 10s
+  repeat_interval: 15m
+  receiver: 'smtp'
+receivers:
+    - name: 'smtp'
+      email_configs:
+          - smarthost: 127.0.0.1:25
+            to: 'monitor@example.com'
+            from: 'montior@example.com'
+            auth_username: 'mail'
+            auth_password: "password"
+            send_resolved: true
+            require_tls: false
